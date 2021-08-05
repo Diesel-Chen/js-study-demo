@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轮播图</title>
+    <script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
+    <style>
+        .box {
+            width: 520px;
+            height: 280px;
+            margin: 20px auto;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .box .container {
+            width: 3000px;
+            height: 280px;
+            font-size: 0px;
+            position: absolute;
+        }
+        
+        .prev,
+        .next {
+            position: absolute;
+            top: 50%;
+            width: 30px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.5);
+            margin-top: -25px;
+            line-height: 50px;
+            text-align: center;
+            color: #fff;
+            font-size: 25px;
+        }
+        
+        .next {
+            right: 0px;
+        }
+        
+        .btns {
+            width: 100%;
+            position: absolute;
+            bottom: 10px;
+            text-align: center;
+        }
+        
+        .btns span {
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            margin: 0 2px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .btns span.choose {
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <div class="container">
+            <img src="./img/1.png" alt="">
+            <img src="./img/2.jpeg" alt="">
+            <img src="./img/3.jpeg" alt="">
+            <img src="./img/4.jpeg" alt="">
+            <img src="./img/5.jpeg" alt="">
+        </div>
+        <div class="btns">
+            <span class="choose"></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="prev">&lt;</div>
+        <div class="next">&gt;</div>
+    </div>
+    <script>
+        var container = $('.container');
+        var btns = $('span');
+        var prev = $('.prev')
+        var next = $('.next')
+            //设置索引
+        var index = 0;
+
+        //定义定时器
+        var timerBar
+
+
+
+        function startLunBo(params) {
+            //设置定时器
+            timerBar = setInterval(() => {
+
+                //索引自增
+                index++;
+
+                //边界
+                if (index >= 5) {
+                    index = 0;
+                }
+
+                //变化图片位置
+                change()
+            }, 1000);
+        }
+
+        startLunBo()
+
+        function change(fn) {
+            //获取到对应的img
+            container.stop(true).animate({
+                left: -index * 520,
+            }, 500)
+
+            //按钮增加样式
+            btns.eq(index).addClass('choose')
+                .siblings().removeClass('choose')
+
+            fn && fn()
+        }
+
+        //按钮点击事件
+        btns.click(function() {
+
+            //清楚定时器
+            clearInterval(timerBar)
+
+            //获取索引
+            index = $(this).index()
+
+            change(startLunBo)
+
+        })
+
+        prev.click(function() {
+
+            //清除定时器样式
+            clearInterval(timerBar)
+
+            index--
+
+            //边界值
+            if (index < 0) {
+                index = 4
+            }
+            change(startLunBo)
+
+        })
+
+        next.click(function() {
+            //清除定时器样式
+            clearInterval(timerBar)
+            index++
+
+            //边界值
+            if (index >= 5) {
+                index = 0
+            }
+
+            change(startLunBo)
+        })
+    </script>
+
+</body>
+
+</html>
