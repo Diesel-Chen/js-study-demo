@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
+</head>
+
+<body>
+    <div></div>
+    <script>
+        //js对象和jq对象相互转换
+        // js -->jq  $()
+        //jq -->js  加索引
+        var divs = document.getElementsByTagName('div')
+        divs[0].innerHTML = '中国牛逼'
+        divs[0].style.color = 'red'
+        divs[0].style.fontSize = '20'
+
+        $(divs[0]).html('我牛逼')
+
+        $('div').html('世界第一').css({
+            color: 'green',
+            fontSize: '30'
+        })
+
+        var target = $('div')
+        console.log(target[0])
+    </script>
+</body>
+
+</html>
