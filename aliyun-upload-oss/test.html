@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="script/decimal.js"></script>
+</head>
+
+<body>
+    <script>
+        let demoReq = [{
+            matchId: 1008467, //比赛id
+            matchNumStr: "周三001", //投注场次
+            homeTeamAbbName: "凯尔特人", //主队
+            awayTeamAbbName: "阿尔克马", //客队
+            choosed: [{
+                type: "hhad.h", //选中的投注类型
+                odds: "2.90", //赔率
+            }, {
+                type: "hhad.d", //选中的投注类型
+                odds: "5.10", //赔率
+            }, {
+                type: "hhad.d", //选中的投注类型
+                odds: "4.85", //赔率
+            }, ]
+        }, {
+            matchId: 1008468, //比赛id
+            matchNumStr: "周三002", //投注场次
+            homeTeamAbbName: "伯明翰", //主队
+            awayTeamAbbName: "伯恩茅斯", //客队
+            choosed: [{
+                type: "crs.s00s02", //选中的投注类型
+                odds: "1.45", //赔率
+            }, {
+                type: "ttg.s2", //选中的投注类型
+                odds: "3.75", //赔率
+            }, ]
+        }, {
+            matchId: 1008468, //比赛id
+            matchNumStr: "周三002", //投注场次
+            homeTeamAbbName: "伯明翰", //主队
+            awayTeamAbbName: "伯恩茅斯", //客队
+            choosed: [{
+                type: "crs.s00s02", //选中的投注类型
+                odds: "3.70", //赔率
+            }, {
+                type: "ttg.s2", //选中的投注类型
+                odds: "1.66", //赔率
+            }, ]
+        }]
+
+        //临时栈，存放过程
+        let tmp = []
+            //存放组合结果，
+        let result = []
+
+        let betCnt = 0 //几注
+
+        let multiply = 13 //倍数
+
+        let betAmount = 1 //投注金额
+
+        let minLottery = 1 //最小奖金
+
+        let maxLottery = 1 //最大奖金
+
+        let minOdds = Number.MAX_VALUE //组合最小赔率
+
+
+        let maxOdds = 0 //组合最大赔率
+
+
+        function arrangement(arr, N, tmp, result) {
+            for (let i = 0; i < arr[N].choosed.length; ++i) {
+                //N表示第几个数组，如arr[0]，表示第一个数组a。arr[0][0]，表示数组a的第一个元素
+                tmp.push({
+                        ...arr[N].choosed[i],
+                        matchId: arr[N].matchId,
+                        matchNumStr: arr[N].matchNumStr,
+                        homeTeamAbbName: arr[N].homeTeamAbbName,
+                        awayTeamAbbName: arr[N].awayTeamAbbName,
+                    })
+                    //arr.length为合并前的数组的数量
+                if (N < arr.length - 1) {
+                    arrangement(arr, N + 1, tmp, result)
+                } else {
+                    let oneResult = [];
+                    let tmpMaxOdds = 1 //中间临时变量
+                    let tmpMinOdds = 1 //中间临时变量
+                    for (let j = 0; j < arr.length; j++) {
+                        oneResult.push(tmp[j])
+                        tmpMinOdds = new Decimal(tmpMinOdds).mul(new Decimal(tmp[j].odds)).toNumber()
+                        tmpMaxOdds = new Decimal(tmpMaxOdds).mul(new Decimal(tmp[j].odds)).toNumber()
+                    }
+                    if (tmpMinOdds < minOdds) {
+                        minOdds = tmpMinOdds
+                    }
+                    if (tmpMaxOdds > maxOdds) {
+                        maxOdds = tmpMaxOdds
+                    }
+                    result.push(oneResult)
+                }
+                //最后一位出栈
+                tmp.pop()
+            }
+        }
+
+        //核心函数
+        function calculateBet(arr, tmp, result) {
+            //计算出排列组合并且求出最大最小赔率
+            arrangement(arr, 0, tmp, result)
+            for (let i = 0; i < result.length; i++) {
+                console.log(result[i])
+            }
+            console.log(result.length, result, minOdds, maxOdds)
+
+            betCnt = result.length
+
+            //投注金额 = 注数 * 倍数 * 2
+            betAmount = betCnt * multiply * 2
+            minLottery = new Decimal((2 * multiply)).mul(new Decimal(minOdds)).toNumber().toFixed(2)
+            maxLottery = new Decimal((2 * multiply)).mul(new Decimal(maxOdds)).toNumber().toFixed(2)
+            console.log("注数:" + betCnt, "共" + betAmount + "元", "最低奖金" + minLottery, "最高奖金" + maxLottery)
+
+        }
+        calculateBet(demoReq, tmp, result)
+    </script>
+
+</body>
+
+</html>
